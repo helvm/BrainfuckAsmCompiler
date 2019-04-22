@@ -29,7 +29,7 @@ A complete overview of every available instruction:
 * sub $0, $1
 * mul $0, $1, $2        //$0 = $1*$2
 * div $0, $1, $2, $3    //$0 = $2 / $3, $1 = $2 % $3
-* out 0                 //print 0
+* out 0                 //print character '\0'
 * out $0                //print character in $0
 * in $0                 //read character to $0
 * push 0
@@ -45,7 +45,7 @@ A complete overview of every available instruction:
 * jge $0, $1, labelName //jump to labelName if $0 >= $1 (unsigned comparison)
 * jl $0, $1, labelName  //jump to labelName if $0 < $1 (unsigned comparison)
 * jle $0, $1, labelName //jump to labelName if $0 <= $1 (unsigned comparison)
-* call labelName:       //call function 'labelName'
+* call labelName       //call function 'labelName'
 * ret                   //return from current function
 * stacksize 0           //defines the stack-size, if you use the stack above that size, it will overwrite the memory
 * global 0 0,1,2        //initialize the memory at position 0 with the given numbers
