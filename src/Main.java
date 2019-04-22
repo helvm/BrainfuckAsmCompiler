@@ -37,6 +37,7 @@ public class Main {
         String pathOutput = null;
         Boolean interpretResult = null;
         Boolean showResult = null;
+        Boolean justUseInterpreter = null;
         boolean containsInvalidArgs = false;
         for (int i=1; i<args.length; i++) {
             if (args[i].equals("-o") && i+1<args.length && pathOutput == null) {
@@ -46,6 +47,8 @@ public class Main {
                 interpretResult = true;
             else if (args[i].equals("-p") && showResult == null)
                 showResult = true;
+            else if (args[i].equals("-i") && justUseInterpreter == null)
+                justUseInterpreter = true;
             else
                 containsInvalidArgs = true;
         }
@@ -53,8 +56,10 @@ public class Main {
             showResult = false;
         if (interpretResult == null)
             interpretResult = false;
+        if (justUseInterpreter == null)
+            justUseInterpreter = false;
         
-        if (containsInvalidArgs || pathInput == null || (!interpretResult && !showResult && pathOutput == null)) {
+        if (containsInvalidArgs || pathInput == null || (justUseInterpreter && (interpretResult || showResult || pathOutput != null)) || (!justUseInterpreter && !interpretResult && !showResult && pathOutput == null)) {
             System.out.println("Usage: [input-file] [options]");
             System.out.println("");
             System.out.println("Options:");
@@ -62,25 +67,34 @@ public class Main {
             System.out.println("   -p          print the translated brainfuck-code on the console");
             System.out.println("   -e          interpret the translated brainfuck-code in a built-in brainfuck-interpreter");
             System.out.println("               the cells of this interpreter are from 0 to Inf, containing bytes");
+            System.out.println("   -i          just use the interpreter, use the input-file as input (brainfuck-code)");
             System.out.println("");
             System.out.println("Example usage:");
             System.out.println("   java Main samples/fibonacci.asm -o fibonacci.bf");
             System.out.println("   java Main samples/fibonacci.asm -e");
         } else {
-            Parser parser = new Parser(pathInput);
-            CodeCreation code = new CodeCreation(parser);
-            String bfCode = Optimizer.optimizeSimple(new ControlFlowSegments(code).createMainLoop(), true);
-            
-            if (showResult)
-                System.out.println(bfCode);
-            if (pathOutput != null) {
-                SimpleTextFile file = new SimpleTextFile();
-                file.lines.add(bfCode);
-                file.write(pathOutput);
+            if (justUseInterpreter) {
+                SimpleTextFile file = new SimpleTextFile(pathInput);
+                StringBuilder bfCode = new StringBuilder();
+                for (String line : file.lines)
+                    bfCode.append(line.trim());
+                new SimpleInterpreter().execute(bfCode.toString());
+            } else {
+                Parser parser = new Parser(pathInput);
+                CodeCreation code = new CodeCreation(parser);
+                String bfCode = Optimizer.optimizeSimple(new ControlFlowSegments(code).createMainLoop(), true);
+
+                if (showResult)
+                    System.out.println(bfCode);
+                if (pathOutput != null) {
+                    SimpleTextFile file = new SimpleTextFile();
+                    file.lines.add(bfCode);
+                    file.write(pathOutput);
+                }
+
+                if (interpretResult)
+                    new SimpleInterpreter().execute(bfCode);
             }
-            
-            if (interpretResult)
-                new SimpleInterpreter().execute(bfCode);
         }
     }
     
