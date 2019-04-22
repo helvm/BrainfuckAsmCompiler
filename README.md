@@ -14,6 +14,7 @@ other cell-sizes as well.
 
 A complete overview of every available instruction:
 
+```
 * mov $0, $1            //$0 = $1
 * mov $0, 0
 * mov $0, [0]           //memory lookup at position 0
@@ -26,7 +27,7 @@ A complete overview of every available instruction:
 * add $0, $1            //$0 = S0+$1
 * sub $0, 0
 * sub $0, $1
-* mul $0, $1, $2        //$0 = $1\*$2
+* mul $0, $1, $2        //$0 = $1*$2
 * div $0, $1, $2, $3    //$0 = $2 / $3, $1 = $2 % $3
 * out 0                 //print 0
 * out $0                //print character in $0
@@ -49,6 +50,7 @@ A complete overview of every available instruction:
 * stacksize 0           //defines the stack-size, if you use the stack above that size, it will overwrite the memory
 * global 0 0,1,2        //initialize the memory at position 0 with the given numbers
 * global 0 "abc\n\0"    //initialize the memory at position 0 with the given string
+```
 
 
 Build
